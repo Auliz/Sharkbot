@@ -5,7 +5,7 @@ import {
   CHANNEL_NAME,
   BLOCKED_WORDS,
   DADJOKE_URL,
-} from './constants';
+} from '../constants/constants';
 import fetch from 'node-fetch';
 
 const options = {
