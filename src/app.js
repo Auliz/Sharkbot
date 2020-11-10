@@ -96,13 +96,11 @@ client.on('message', (channel, userstate, message, self) => {
     return;
   }
 
-  if (message.toLowerCase() === '!discord') {
-    discord(channel, userstate);
-    return;
-  }
-
-  if (message.toLowerCase() === '!disc') {
-    discord(channel, userstate);
+  if (
+    message.toLowerCase().includes('!discord') ||
+    message.toLowerCase().includes('!disc')
+  ) {
+    discord(channel, userstate, message);
     return;
   }
 
@@ -114,6 +112,12 @@ client.on('message', (channel, userstate, message, self) => {
 
   if (message.toLowerCase() === '!news') {
     news(channel, userstate);
+    return;
+  }
+
+  // specific to WildSideC, feel free to comment or remove
+  if (message.toLowerCase() === '!spoop') {
+    spoop(channel, userstate);
     return;
   }
 
@@ -201,7 +205,7 @@ function subGiftHandler(
 // commands
 
 function hello(channel, userstate) {
-  client.say(channel, `@${userstate.username}, Heyo! HeyGuys`); // Can change to whatever greeting you like
+  client.say(channel, `@${userstate.username} Heyo! HeyGuys`); // Can change to whatever greeting you like
 }
 
 function oneMore(channel, userstate) {
@@ -211,19 +215,48 @@ function oneMore(channel, userstate) {
 function news(channel, userstate) {
   client.say(
     channel,
-    `@${userstate.username}, A channel re-vamp is coming soon. More details will be available soon.` // can change this to be whatever news you may have to share
+    `@${userstate.username} A channel re-vamp is coming soon. More details will be available soon.` // can change this to be whatever news you may have to share
   );
 }
 
-function discord(channel, userstate) {
-  client.say(
-    channel,
-    `@${userstate.username}, The discord invite link is: YOUR DISCORD LINK HERE` // Put your discord here
-  );
+// used to generate a random number for spoop()
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function spoop(channel, userstate) {
+  let boo = 'boo';
+  // adds an o to the end of boo based on the random number
+  for (let i = getRandomInt(13); i <= 13; i++) {
+    boo += 'o';
+  }
+  // makes every other character capital. ex: BoOoOoOoO
+  let res = '';
+  for (let j = 0; j < boo.length; j++) {
+    res += j % 2 == 0 ? boo.charAt(j).toUpperCase() : boo.charAt(j);
+  }
+  client.say(channel, `${res}`);
+  // client.say(channel, `@${userstate.username} ${res}`);
+}
+
+function discord(channel, userstate, message) {
+  if (message.startsWith('@')) {
+    const splitString = message.split(' ');
+    const taggedUser = splitString[0].substring(1);
+    // console.log(taggedUser.substring(1));
+    client.say(
+      channel,
+      `@${taggedUser} The discord invite link is: https://discord.gg/bBs2wMh` // Put your discord here
+    );
+  } else {
+    client.say(
+      channel,
+      `@${userstate.username} The discord invite link is: https://discord.gg/bBs2wMh` // Put your discord here
+    );
+  }
 }
 
 function checkTwitchChat(userstate, message, channel) {
-  console.log(message);
   message = message.toLowerCase();
   let shouldSendMessage = false;
   shouldSendMessage = BLOCKED_WORDS.some((blockedWord) =>
@@ -233,7 +266,7 @@ function checkTwitchChat(userstate, message, channel) {
     // tell user
     client.say(
       channel,
-      `@${userstate.username}, Sorry! Your message was deleted.`
+      `@${userstate.username} Sorry! Your message was deleted.`
     );
     // delete message
     client.deletemessage(channel, userstate.id);
@@ -254,7 +287,7 @@ async function dadJoke(channel, userstate) {
   let response = await fetch(DADJOKE_URL, objReq);
   let result = await response.json();
 
-  client.say(channel, `@${userstate.username}, ${result.joke}`);
+  client.say(channel, `@${userstate.username} ${result.joke}`);
 }
 
 let timerId;
