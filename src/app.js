@@ -5,6 +5,8 @@ import {
   CHANNEL_NAME,
   BLOCKED_WORDS,
   DADJOKE_URL,
+  FACTS_URL,
+  MOVIE_URL,
 } from '../constants/constants';
 import fetch from 'node-fetch';
 
@@ -91,8 +93,8 @@ client.on('message', (channel, userstate, message, self) => {
     return;
   }
 
-  if (message.toLowerCase() === '!hello') {
-    hello(channel, userstate);
+  if (message.toLowerCase() === '!commands') {
+    commands(channel, userstate);
     return;
   }
 
@@ -106,24 +108,34 @@ client.on('message', (channel, userstate, message, self) => {
 
   // IF YOU COMMENTED OUT THE OTHER DADJOKE FUNCTIONS / VARIABLES, COMMENT THIS OUT TOO
   if (message.toLowerCase() === '!dadjoke') {
-    noSpamDadJoke(channel, userstate);
+    noSpamDadJoke(channel);
     return;
   }
 
-  if (message.toLowerCase() === '!news') {
-    news(channel, userstate);
+  if (message.toLowerCase() === '!fact') {
+    uselessFacts(channel);
     return;
   }
+
+  if (message.toLowerCase() === '!movieq') {
+    movieQuote(channel);
+    return;
+  }
+
+  // if (message.toLowerCase() === '!news') {
+  //   news(channel, userstate);
+  //   return;
+  // }
 
   // specific to WildSideC, feel free to comment or remove
   if (message.toLowerCase() === '!spoop') {
-    spoop(channel, userstate);
+    spoop(channel);
     return;
   }
 
   // specific to WildSideC, feel free to comment or remove
   if (message.toLowerCase() === '!onemore') {
-    oneMore(channel, userstate);
+    oneMore(channel);
     return;
   }
 
@@ -204,27 +216,30 @@ function subGiftHandler(
 
 // commands
 
-function hello(channel, userstate) {
-  client.say(channel, `@${userstate.username} Heyo! HeyGuys`); // Can change to whatever greeting you like
+function commands(channel, userstate) {
+  client.say(
+    channel,
+    `@${userstate.username} The current channel commands are: !discord, !disc, !dadjoke, !fact, !movieq, !spoop, !onemore`
+  );
 }
 
-function oneMore(channel, userstate) {
+function oneMore(channel) {
   client.say(channel, `Kappa Kappa Kappa`); // can comment this out, is specific to WildSideC
 }
 
-function news(channel, userstate) {
-  client.say(
-    channel,
-    `@${userstate.username} A channel re-vamp is coming soon. More details will be available soon.` // can change this to be whatever news you may have to share
-  );
-}
+// function news(channel, userstate) {
+//   client.say(
+//     channel,
+//     `@${userstate.username} A channel re-vamp is coming soon. More details will be available soon.` // can change this to be whatever news you may have to share
+//   );
+// }
 
 // used to generate a random number for spoop()
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
-function spoop(channel, userstate) {
+function spoop(channel) {
   let boo = 'boo';
   // adds an o to the end of boo based on the random number
   for (let i = getRandomInt(13); i <= 13; i++) {
@@ -275,7 +290,7 @@ function checkTwitchChat(userstate, message, channel) {
 
 // IF YOU COMMENTED OUT THE DADJOKE CONST IN THE CONSTANTS FILE, COMMENT THE BELOW CODE OUT AS WELL.
 
-async function dadJoke(channel, userstate) {
+async function dadJoke(channel) {
   const objReq = {
     method: 'GET',
     headers: {
@@ -287,15 +302,45 @@ async function dadJoke(channel, userstate) {
   let response = await fetch(DADJOKE_URL, objReq);
   let result = await response.json();
 
-  client.say(channel, `@${userstate.username} ${result.joke}`);
+  client.say(channel, `${result.joke}`);
 }
 
 let timerId;
-function noSpamDadJoke(channel, userstate) {
+function noSpamDadJoke(channel) {
   if (!(timerId === null)) {
     clearTimeout(timerId);
   }
   timerId = setTimeout(() => {
-    dadJoke(channel, userstate);
+    dadJoke(channel);
   }, 400);
+}
+
+async function uselessFacts(channel) {
+  const objReq = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
+
+  let response = await fetch(FACTS_URL, objReq);
+  let result = await response.json();
+
+  client.say(channel, `${result.text}`);
+}
+
+async function movieQuote(channel) {
+  const objReq = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
+
+  let response = await fetch(MOVIE_URL, objReq);
+  let result = await response.json();
+
+  client.say(channel, `${result.content} -- ${result.film}`);
 }
