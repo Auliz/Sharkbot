@@ -12,14 +12,6 @@ const objReq = {
 };
 const url = 'https://icanhazdadjoke.com/';
 
-// async function dadJoke() {
-//   return fetch('https://icanhazdadjoke.com/', objReq)
-//     .then((resp) => resp.json())
-//     .then((joke) => {
-//       return joke;
-//     });
-// }
-
 let fetchDataFromApi = async () => {
   let response = await fetch(url, objReq);
   let result = await response.json();
@@ -32,17 +24,3 @@ async function caller() {
   console.log(jokes.joke);
 }
 caller();
-
-console.log('====================================');
-console.log(jokes.joke);
-console.log('====================================');
-
-// setTimeout(() => {
-//   caller();
-// }, 1000);
-
-// if (jokes.joke === '') {
-//   console.log('Fetch not fast enough.');
-// } else {
-//   console.log(jokes.joke);
-// }
